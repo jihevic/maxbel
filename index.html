@@ -3,36 +3,31 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Максим Бельтиков - режиссёр монтажа</title>
-  <meta name="description" content="Портфолио режиссёра монтажа.">
+  <title>Максим Бельтиков — режиссёр монтажа</title>
+  <meta name="description" content="Портфолио видеомонтажёра: лента работ.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="topbar">
-    <div class="wrap">
+    <div class="wrap header-row">
       <a class="brand" href="#">
-        <img src="assets/logo.svg" alt="" onerror="this.style.display='none'">
-        <span>Максим Бельтиков</span>
+        <img class="avatar" src="assets/avatar.jpg" alt="Фото" onerror="this.style.display='none'">
+        <div class="brand-text">
+          <h1>Максим Бельтиков — режиссёр монтажа</h1>
+          <p class="role">Видеомонтаж • Color • VFX</p>
+        </div>
       </a>
-      <div class="search">
-        <input id="search" type="search" placeholder="Поиск по названию/клиенту…">
-      </div>
+      <a class="contact" href="https://t.me/your_username" target="_blank" rel="noopener">Telegram</a>
     </div>
-    <nav id="tabs" class="tabs"></nav>
   </header>
 
   <main class="wrap">
-    <section id="stats" class="stats">
-      <div class="stat"><span id="count">0</span><label>Видео</label></div>
-      <div class="stat"><span id="clients">0</span><label>Клиенты</label></div>
-      <div class="stat"><span id="years">0</span><label>Годы</label></div>
-    </section>
-    <section id="videos" class="grid" aria-live="polite"></section>
+    <section id="videos" class="stack" aria-live="polite"></section>
   </main>
 
   <footer class="footer">
     <div class="wrap">
-      <p>© <span id="year"></span> Максим Бельтиков · <a href="@VelhoVoice">@VelhoVoice</a></p>
+      <p>© <span id="year"></span> Максим Бельтиков</p>
     </div>
   </footer>
 
