@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Максим Бельтиков - режиссёр монтажа</title>
+  <meta name="description" content="Портфолио режиссёра монтажа.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="#">
+        <img src="assets/logo.svg" alt="" onerror="this.style.display='none'">
+        <span>Максим Бельтиков</span>
+      </a>
+      <div class="search">
+        <input id="search" type="search" placeholder="Поиск по названию/клиенту…">
+      </div>
+    </div>
+    <nav id="tabs" class="tabs"></nav>
+  </header>
+
+  <main class="wrap">
+    <section id="stats" class="stats">
+      <div class="stat"><span id="count">0</span><label>Видео</label></div>
+      <div class="stat"><span id="clients">0</span><label>Клиенты</label></div>
+      <div class="stat"><span id="years">0</span><label>Годы</label></div>
+    </section>
+    <section id="videos" class="grid" aria-live="polite"></section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>© <span id="year"></span> Максим Бельтиков · <a href="@VelhoVoice">@VelhoVoice</a></p>
+    </div>
+  </footer>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
