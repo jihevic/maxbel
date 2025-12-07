@@ -1,0 +1,51 @@
+:root{
+  color-scheme: dark;
+  --bg:#0e0f12; --panel:#14161b; --muted:#9aa3b2; --text:#e9edf3; --line:#20242b; --accent:#57a6ff;
+  --wrap:1200px; --gap:16px; --radius:12px; --shadow:0 6px 20px rgba(0,0,0,.25);
+  --card-bg:#161921;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 16px}
+
+/* Прилипшая верхняя панель + поиск (как у SocialBlade) */
+.topbar{position:sticky;top:0;z-index:10;background:rgba(12,13,16,.75);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;gap:16px;min-height:56px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--text)}
+.brand img{width:24px;height:24px}
+.search{margin-left:auto}
+.search input{width:260px;max-width:48vw;background:#0f1116;border:1px solid #1e222a;color:var(--text);padding:8px 10px;border-radius:8px;outline:none}
+.search input:focus{border-color:#2b3140}
+
+/* Табы разделов */
+.tabs{display:flex;gap:8px;padding:8px 16px;border-top:1px solid var(--line)}
+.tabs button{
+  background:#0f1116;border:1px solid #1e222a;color:#cfd6e4;padding:6px 12px;border-radius:999px;cursor:pointer;font-size:13px
+}
+.tabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#0b0d12}
+
+/* Небольшие сводные метрики */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 0}
+.stat{background:#10131a;border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:center}
+.stat span{display:block;font-weight:700;font-size:18px}
+.stat label{display:block;color:var(--muted);font-size:12px}
+
+/* Сетка карточек */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--gap);padding:8px 0 24px}
+.card{background:var(--card-bg);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.embed{position:relative;aspect-ratio:16/9;background:#0b0d12}
+.embed iframe, .embed video{position:absolute;inset:0;width:100%;height:100%;border:0}
+.body{padding:12px}
+.h3{margin:0 0 6px;font-size:16px;font-weight:600}
+.meta{margin:0 0 8px;color:var(--muted);font-size:12px}
+.tags{margin:0;color:var(--muted);font-size:12px}
+
+.footer{border-top:1px solid var(--line);color:var(--muted);margin-top:8px}
+.footer .wrap{padding:14px 16px;text-align:center}
+
+@media (max-width:520px){
+  .stats{grid-template-columns:1fr 1fr}
+  .search input{width:48vw}
+}
