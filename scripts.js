@@ -1,37 +1,34 @@
-:root{
-  color-scheme: dark;
-  --bg:#0e0f12; --panel:#14161b; --muted:#9aa3b2; --text:#e9edf3; --line:#20242b; --accent:#57a6ff;
-  --wrap:900px; /* уже строго вертикальная колонка */
-  --gap:20px; --radius:14px;
+async function loadJSON(url){
+  const r = await fetch(url,{cache:'no-store'});
+  if(!r.ok) throw new Error('Load '+url);
+  return r.json();
 }
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:var(--wrap);margin:0 auto;padding:0 16px}
+function ytId(u){try{const x=new URL(u); if(x.hostname.includes('youtu.be')) return x.pathname.slice(1); if(x.searchParams.get('v')) return x.searchParams.get('v'); const p=x.pathname.split('/'); const i=p.indexOf('embed'); if(i>=0 && p[i+1]) return p[i+1];}catch{} return '';}
+function vmId(u){try{const x=new URL(u); return x.pathname.split('/').filter(Boolean).pop()||'';}catch{} return '';}
 
-/* Верхняя панель с аватаром и именем */
-.topbar{position:sticky;top:0;z-index:10;background:rgba(12,13,16,.8);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.header-row{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px;padding:10px 0}
-.brand{display:flex;align-items:center;gap:12px;color:var(--text);text-decoration:none}
-.avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:1px solid #1f2330}
-.brand-text h1{font-size:18px;line-height:1.2;margin:0 0 2px 0}
-.role{margin:0;color:var(--muted);font-size:13px}
-.contact{background:#0f1116;border:1px solid #1e222a;color:#cfd6e4;padding:8px 12px;border-radius:999px}
-
-/* Вертикальная лента видео (строго один столбец) */
-.stack{display:flex;flex-direction:column;gap:28px;padding:20px 0 40px}
-.video{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-.video .title{margin:0;padding:14px 16px;font-size:18px;font-weight:600;border-bottom:1px solid var(--line)}
-.embed{position:relative;aspect-ratio:16/9; /* можно увеличить под вертикальнее окно: 16/8 (2:1) */
-        background:#0b0d12}
-.embed iframe, .embed video{position:absolute;inset:0;width:100%;height:100%;border:0}
-
-/* Футер */
-.footer{border-top:1px solid var(--line);color:var(--muted);margin-top:8px}
-.footer .wrap{padding:14px 16px;text-align:center}
-
-@media (max-width:520px){
-  :root{ --wrap:100%; }
-  .avatar{width:38px;height:38px}
+function embedHTML(v){
+  if(v.platform==='youtube'){const id=ytId(v.url); return `<iframe loading="lazy" src="https://www.youtube.com/embed/${id}?rel=0" allowfullscreen></iframe>`;}
+  if(v.platform==='vimeo'){const id=vmId(v.url); return `<iframe loading="lazy" src="https://player.vimeo.com/video/${id}" allowfullscreen></iframe>`;}
+  if(v.platform==='file'){return `<video controls preload="metadata" poster="${v.thumb||''}"><source src="${v.url}" type="video/mp4"></video>`;}
+  return '';
 }
+
+function block(v){
+  return `
+    <article class="video">
+      <h3 class="title">${v.title||''}</h3>
+      <div class="embed">${embedHTML(v)}</div>
+    </article>
+  `;
+}
+
+async function main(){
+  document.getElementById('year').textContent = new Date().getFullYear();
+  const items = await loadJSON('data/videos.json');
+  // по желанию: сортировка по дате
+  items.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+
+  const root = document.getElementById('videos');
+  root.innerHTML = items.map(block).join('');
+}
+main().catch(console.error);
