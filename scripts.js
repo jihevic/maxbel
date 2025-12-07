@@ -1,71 +1,37 @@
-async function j(url){const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error('Load '+url); return r.json();}
-function ytId(u){try{const x=new URL(u); if(x.hostname.includes('youtu.be')) return x.pathname.slice(1); if(x.searchParams.get('v')) return x.searchParams.get('v'); const p=x.pathname.split('/'); const i=p.indexOf('embed'); if(i>=0 && p[i+1]) return p[i+1];}catch{} return '';}
-function vmId(u){try{const x=new URL(u); return x.pathname.split('/').filter(Boolean).pop()||'';}catch{} return '';}
-function embedHTML(v){
-  if(v.platform==='youtube'){const id=ytId(v.url); return `<iframe loading="lazy" src="https://www.youtube.com/embed/${id}?rel=0" allowfullscreen></iframe>`;}
-  if(v.platform==='vimeo'){const id=vmId(v.url); return `<iframe loading="lazy" src="https://player.vimeo.com/video/${id}" allowfullscreen></iframe>`;}
-  if(v.platform==='file'){return `<video controls preload="metadata" poster="${v.thumb||''}"><source src="${v.url}" type="video/mp4"></video>`;}
-  return '';
+:root{
+  color-scheme: dark;
+  --bg:#0e0f12; --panel:#14161b; --muted:#9aa3b2; --text:#e9edf3; --line:#20242b; --accent:#57a6ff;
+  --wrap:900px; /* уже строго вертикальная колонка */
+  --gap:20px; --radius:14px;
 }
-function card(v){return `
-  <article class="card">
-    <div class="embed">${embedHTML(v)}</div>
-    <div class="body">
-      <h3 class="h3">${v.title||''}</h3>
-      <p class="meta">${[v.client,v.date].filter(Boolean).join(' · ')}</p>
-      <p class="tags">${(v.tags||[]).map(t=>'#'+t).join(' ')}</p>
-    </div>
-  </article>`;}
-function uniqTags(items){return Array.from(new Set(items.flatMap(v=>v.tags||[]))).sort((a,b)=>a.localeCompare(b));}
-function filterItems(items, tab, q){
-  const qn=(q||'').trim().toLowerCase();
-  return items.filter(v=>{
-    const byTab = (tab==='Все') || (v.tags||[]).includes(tab);
-    const txt = [v.title||'', v.client||''].join(' ').toLowerCase();
-    const byQ = !qn || txt.includes(qn);
-    return byTab && byQ;
-  });
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 16px}
+
+/* Верхняя панель с аватаром и именем */
+.topbar{position:sticky;top:0;z-index:10;background:rgba(12,13,16,.8);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px;padding:10px 0}
+.brand{display:flex;align-items:center;gap:12px;color:var(--text);text-decoration:none}
+.avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:1px solid #1f2330}
+.brand-text h1{font-size:18px;line-height:1.2;margin:0 0 2px 0}
+.role{margin:0;color:var(--muted);font-size:13px}
+.contact{background:#0f1116;border:1px solid #1e222a;color:#cfd6e4;padding:8px 12px;border-radius:999px}
+
+/* Вертикальная лента видео (строго один столбец) */
+.stack{display:flex;flex-direction:column;gap:28px;padding:20px 0 40px}
+.video{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.video .title{margin:0;padding:14px 16px;font-size:18px;font-weight:600;border-bottom:1px solid var(--line)}
+.embed{position:relative;aspect-ratio:16/9; /* можно увеличить под вертикальнее окно: 16/8 (2:1) */
+        background:#0b0d12}
+.embed iframe, .embed video{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+/* Футер */
+.footer{border-top:1px solid var(--line);color:var(--muted);margin-top:8px}
+.footer .wrap{padding:14px 16px;text-align:center}
+
+@media (max-width:520px){
+  :root{ --wrap:100%; }
+  .avatar{width:38px;height:38px}
 }
-function renderTabs(tags,current){return ['Все',...tags].map(t=>`<button type="button" data-tab="${t}" aria-pressed="${t===current}">${t}</button>`).join('');}
-function updateStats(items){
-  document.getElementById('count').textContent = String(items.length);
-  const clients = new Set(items.map(x=>x.client).filter(Boolean));
-  document.getElementById('clients').textContent = String(clients.size);
-  const years = new Set(items.map(x=>String(x.date||'').slice(0,4)).filter(Boolean));
-  document.getElementById('years').textContent = String(years.size);
-}
-
-async function main(){
-  document.getElementById('year').textContent = new Date().getFullYear();
-  const items = await j('data/videos.json');
-  items.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
-
-  const tabsEl = document.getElementById('tabs');
-  const gridEl = document.getElementById('videos');
-  const searchEl = document.getElementById('search');
-
-  let current = 'Все';
-  let tags = uniqTags(items);
-  tabsEl.innerHTML = renderTabs(tags,current);
-  updateStats(items);
-
-  function render(){
-    const filtered = filterItems(items, current, searchEl.value);
-    gridEl.innerHTML = filtered.map(card).join('');
-    updateStats(filtered);
-  }
-
-  tabsEl.addEventListener('click', e=>{
-    const b=e.target.closest('button[data-tab]'); if(!b) return;
-    current = b.dataset.tab;
-    tabsEl.innerHTML = renderTabs(tags,current);
-    render(); window.scrollTo({top:0,behavior:'smooth'});
-  });
-
-  let t; searchEl.addEventListener('input', ()=>{
-    clearTimeout(t); t=setTimeout(render, 150);
-  });
-
-  render();
-}
-main().catch(console.error);
