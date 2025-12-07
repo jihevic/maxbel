@@ -8,7 +8,7 @@ function vmId(u){try{const x=new URL(u); return x.pathname.split('/').filter(Boo
 
 function embedHTML(v){
   if(v.platform==='youtube'){const id=ytId(v.url); return `<iframe loading="lazy" src="https://www.youtube.com/embed/${id}?rel=0" allowfullscreen></iframe>`;}
-  if(v.platform==='vimeo'){const id=vmId(v.url); return `<iframe loading="lazy" src="https://player.vimeo.com/video/${id}" allowfullscreen></iframe>`;}
+  if(v.platform==='youtube'){const id=ytId(v.url); return `<iframe loading="lazy" src="https://www.youtube.com/embed/${id}?rel=0" allowfullscreen></iframe>`;}
   if(v.platform==='file'){return `<video controls preload="metadata" poster="${v.thumb||''}"><source src="${v.url}" type="video/mp4"></video>`;}
   return '';
 }
