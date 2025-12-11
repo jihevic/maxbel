@@ -7,11 +7,32 @@ function ytId(u){try{const x=new URL(u); if(x.hostname.includes('youtu.be')) ret
 function vmId(u){try{const x=new URL(u); return x.pathname.split('/').filter(Boolean).pop()||'';}catch{} return '';}
 
 function embedHTML(v){
-  if(v.platform==='youtube'){const id=ytId(v.url); return `<iframe loading="lazy" src="https://www.youtube.com/embed/${id}?rel=0" allowfullscreen></iframe>`;}
-  if(v.platform==='dzen'){const id=vmId(v.url); return `<iframe loading="lazy" src="https://dzen.ru/video/watch/${id}" allowfullscreen></iframe>`;}
-  if(v.platform==='file'){return `<video controls preload="metadata" poster="${v.thumb||''}"><source src="${v.url}" type="video/mp4"></video>`;}
+  if (v.platform === 'youtube') {
+    const id = ytId(v.url);
+    return `<iframe loading="lazy"
+              src="https://www.youtube.com/embed/${id}?rel=0"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              allowfullscreen></iframe>`;
+  }
+
+  if (v.platform === 'dzen') {
+    return `<iframe loading="lazy"
+              src="${v.url}"
+              allow="autoplay; fullscreen; accelerometer; gyroscope; picture-in-picture; encrypted-media"
+              frameborder="0"
+              scrolling="no"
+              allowfullscreen></iframe>`;
+  }
+
+  if (v.platform === 'file') {
+    return `<video controls preload="metadata" poster="${v.thumb || ''}">
+              <source src="${v.url}" type="video/mp4">
+            </video>`;
+  }
+
   return '';
 }
+
 
 function block(v){
   return `
